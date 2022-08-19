@@ -1,0 +1,24 @@
+.select__container{
+    background-color: white;
+    border-radius: 5px;
+    border: 3px solid rgb(56, 53, 53);
+    padding: 22px;
+    margin: auto;
+    margin-top: 100px;
+}
+
+.form__container{
+    background-color: rgb(206, 216, 226);
+    padding: 10px;
+}
+
+.user__data{
+    padding: 5px 50px;
+}
+
+.form_select{
+    color: blue;
+}
+.form_select_none{
+    display: none;
+}
