@@ -8,13 +8,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Withselectoption from './routingpages/Withselectoption';
 import Notselectoption from './routingpages/Notselectoption';
 import Formvalide from './formvalide'
+import React from 'react';
 
 const userData = [
-  { name: "Don", id: "02" },
-  { name: "Parvathy", id: "03" },
-  { name: "Kp", id: "04" },
-  { name: "Francis", id: "05" },
-  { name: "Harish", id: "06" }
+  { name: "Don", id: "02" , isChecked:false},
+  { name: "Parvathy", id: "03", isChecked:false },
+  { name: "Kp", id: "04" , isChecked:false},
+  { name: "Francis", id: "05" , isChecked:false},
+  { name: "Harish", id: "06" , isChecked:false}
 ];
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
 
 
           <Route path='/materv2' element={<Materv2 />} />
-          <Route path='/test' element={<Test />} />
+          <Route path='/' element={<Test />} />
 
         </Routes>
       </Router>

@@ -42,7 +42,8 @@ function Select({ Data, hideAllSelect }) {
                         //   users.filter((user) => user?.isChecked !== true).length < 1
                         // }
                         id="01"
-                        checked={!users.some((user) => user?.isChecked !== true)}
+                        checked={!users.some((user) => user.isChecked !== true)}
+                        // checked={true}
                         onChange={handleChange}
                     />
                     <label htmlFor="01">All Select</label>
@@ -55,7 +56,8 @@ function Select({ Data, hideAllSelect }) {
                             <input
                                 type="checkbox"
                                 name={user.name}
-                                checked={user?.isChecked || false}
+                                checked={user.isChecked ? true : false}
+                                // checked={true}
                                 onChange={handleChange}
                                 id={user.id}
                             />

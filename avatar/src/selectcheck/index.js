@@ -4,7 +4,7 @@ import Select from './Select'
 // function index({Data}) {
 //   return (
 //     <div>
-//         <Select Data={Data}/>
+//         <Select Data={Data}  isSelect={isSelect}/>
 //     </div>
 //   )
 // }
