@@ -36,19 +36,31 @@ export default function Userdetail({ data }) {
 
     return (
         <div>
-            <Container sx={{ bgcolor: "gray" ,mt:"25px",p:3}}>
-                <Typography variant='h3' component={"h3"} textAlign="center">User Details</Typography>
+            <Container sx={{ bgcolor: "gray", mt: "25px", p: 3, borderRadius: 1 }}>
+                <Typography variant='h3' component={"h3"} textAlign="center" color={"white"}>User Details</Typography>
                 <Grid container spacing={2} padding={2} alignItems={"center"} >
                     <Grid item xs={12} sm={6} display="flex" gap={2} alignItems={"center"} >
-                        <Avatar
-                            alt="Remy Sharp"
-                            src="/static/images/avatar/1.jpg"
-                            sx={{ width: 56, height: 56 }}
-                        />
-                        <Typography>Francis</Typography>
+                        {
+                            data.map(d => (
+                                <>
+                                    <Avatar
+                                        alt="Remy Sharp"
+                                        src={d.image}
+                                        sx={{ width: 56, height: 56 }}
+                                    />
+                                    <Typography color={"white"}>{d.firstname} {d.lastname}</Typography>
+                                </>
+                            ))
+                        }
                     </Grid>
                     <Grid item xs={12} sm={6} >
-                        <Typography align='right'>Date: 20/10/2022</Typography>
+                        {
+                            data.map(d => (
+                                <>
+                                <Typography align='right'>Date & Time :</Typography>
+                                <Typography align='right' color={'white'}> {d.currentdateandtime}</Typography>
+                                </>
+                            ))}
                     </Grid>
                     <Grid item sm={12}>
 
@@ -70,7 +82,7 @@ export default function Userdetail({ data }) {
                                                 <StyledTableCell component="th" scope="row">
                                                     Contact
                                                 </StyledTableCell>
-                                                <StyledTableCell align="left">:</StyledTableCell>
+                                                <StyledTableCell align="left" >:</StyledTableCell>
                                                 <StyledTableCell align="left">{row.contact}  </StyledTableCell>
                                             </StyledTableRow>
                                             <StyledTableRow key={row.country}>
