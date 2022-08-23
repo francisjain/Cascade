@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DateRangePicker } from '@mui/x-date-pickers-pro';
 import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -29,14 +29,19 @@ TextMaskCustom.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
+
+
+
+
 export default function Formbody({ getData }) {
 
-  const [value, setValue] = React.useState([null, null]);
+  let navigate = useNavigate()
 
-  let navigate =useNavigate()
+  const [value, setValue] = React.useState([null, null]);
+  const [currentimg, setCurrentimg] = React.useState('');  
 
   const [allValues, setAllValues] = useState({
-    image: '',
+    image: { currentimg },
     currentdateandtime: '',
     firstname: '',
     lastname: '',
@@ -54,6 +59,18 @@ export default function Formbody({ getData }) {
   });
   const changeHandler = (e) => {
     setAllValues({ ...allValues, [e.target.name]: e.target.value })
+  }
+
+  const selectImage = (e) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setCurrentimg(reader.result)
+      }
+    }
+    reader.readAsDataURL(e.target.files[0])
+    console.log(e.target.files[0]);
   }
 
   const handleSubmit = (event) => {
@@ -74,10 +91,12 @@ export default function Formbody({ getData }) {
             <Grid xs={12} sm={8} style={{ marginLeft: "50px", width: "100%", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
               <Avatar
                 alt="Remy Sharp"
-                src="/static/images/avatar/1.jpg"
+                src={currentimg}
                 sx={{ width: 56, height: 56 }}
               />
-              <label><b>Upload Your Image</b></label>
+              <input type="file" id='file' onChange={selectImage} style={{ display: "none" }} />
+              <label htmlFor='file' id='uploadbtn'><b>Upload Your Image</b></label>
+
             </Grid>
             <Grid item xs={12} sm={2}>
               <TextField

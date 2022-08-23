@@ -36,7 +36,7 @@ export default function Avatarsample() {
       </Box>
 
 
-      <div style={{ position: "relative", overflow: "hidden" }}>
+      <span style={{ position: "relative", overflow: "hidden" }}>
 
         <IconButton style={{ color: "red", zIndex: "100", position: "absolute", top: "2px" }} onClick={() => { setCurrentimg('') }}><DeleteIcon /></IconButton>
 
@@ -51,7 +51,7 @@ export default function Avatarsample() {
 
         <input type="file" id='file' onChange={selectImage} style={{ display: "none" }} />
         <label htmlFor='file' id='uploadbtn' style={{ zIndex: "10", height: "100%", width: "100%", color: "transparent", position: "absolute", top: "0px", left: "0px" }}>upload image</label>
-      </div>
+      </span>
 
     </Card>
   );
