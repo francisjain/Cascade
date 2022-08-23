@@ -2,10 +2,14 @@ import { Avatar, TextField, Typography, Grid, Input, InputLabel, MenuItem, Selec
 import PropTypes from 'prop-types';
 import { Box, Container } from '@mui/system'
 import { IMaskInput } from 'react-imask';
-import React from 'react'
+import React, { useState } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DateRangePicker } from '@mui/x-date-pickers-pro';
 import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
+import {useNavigate} from 'react-router-dom'
+
+
+
 const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
   const { onChange, ...other } = props;
   return (
@@ -25,29 +29,42 @@ TextMaskCustom.propTypes = {
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
-export default function Formbody() {
-  const [value, setValue] = React.useState([null, null]);
-  const [country, setCountry] = React.useState('');
-  const [values, setValues] = React.useState({
-    textmask: '+91 (100) 000-0000',
-    numberformat: '1320',
-  });
+export default function Formbody({ getData }) {
 
-  const handleChange = (event) => {
-    setCountry(event.target.value);
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    });
-  };
+  const [value, setValue] = React.useState([null, null]);
+
+  let navigate =useNavigate()
+
+  const [allValues, setAllValues] = useState({
+    image: '',
+    currentdateandtime: '',
+    firstname: '',
+    lastname: '',
+    address: '',
+    contact: '+91 (100) 000-0000',
+    country: '',
+    dob: '',
+    gender: '',
+    email: '',
+    password: '',
+    jobtitle: '',
+    workexp: { value },
+    skills: [],
+    timeshift: [null, null]
+  });
+  const changeHandler = (e) => {
+    setAllValues({ ...allValues, [e.target.name]: e.target.value })
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    if (allValues.firstname && allValues.lastname && allValues.email && allValues.password) {
+      // console.log(allValues,"gggg");
+      getData(allValues);
+      navigate('/userDetail')
+    } else { alert('Fill the Required Field') }
   };
+
   return (
     <div>
       <Container>
@@ -62,40 +79,46 @@ export default function Formbody() {
               />
               <label><b>Upload Your Image</b></label>
             </Grid>
-
             <Grid item xs={12} sm={2}>
               <TextField
                 variant='standard'
                 fullWidth
                 id="datetime-local"
+                name="currentdateandtime"
                 label="Date & Time"
                 type="datetime-local"
-                defaultValue="2017-05-24T10:30"
+                // defaultValue="2017-05-24T10:30"
+                onChange={changeHandler}
                 sx={{ width: 250 }}
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
             </Grid>
-
             <Grid item xs={12} sm={6}>
               <TextField
+                error={allValues.firstname == "" ? true : false}
                 autoComplete="given-name"
-                name="firstName"
+                name="firstname"
+                onChange={changeHandler}
                 required
                 fullWidth
                 id="firstName"
                 label="First Name"
+                helperText={allValues.firstname == "" ? "Required Field" : false}
                 autoFocus
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                error={allValues.lastname == "" ? true : false}
+                helperText={allValues.lastname == "" ? "Required Field" : false}
                 required
                 fullWidth
                 id="lastName"
                 label="Last Name"
-                name="lastName"
+                name="lastname"
+                onChange={changeHandler}
                 autoComplete="family-name"
               />
             </Grid>
@@ -106,6 +129,7 @@ export default function Formbody() {
                 id="address"
                 label="Address"
                 name="address"
+                onChange={changeHandler}
                 autoComplete="address"
                 multiline
                 rows={2}
@@ -114,9 +138,9 @@ export default function Formbody() {
             <Grid item xs={12} sm={6}>
               <InputLabel htmlFor="formatted-text-mask-input">Contact Number</InputLabel>
               <Input
-                value={values.textmask}
-                onChange={handleChange}
-                name="textmask"
+                value={allValues.contact}
+                name="contact"
+                onChange={changeHandler}
                 id="formatted-text-mask-input"
                 inputComponent={TextMaskCustom}
               />
@@ -127,13 +151,14 @@ export default function Formbody() {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={country}
+                  value={allValues.country}
+                  name="country"
+                  onChange={changeHandler}
                   label="Country"
-                  onChange={handleChange}
                 >
-                  <MenuItem value={10}>India</MenuItem>
-                  <MenuItem value={20}>USA</MenuItem>
-                  <MenuItem value={30}>Canada</MenuItem>
+                  <MenuItem value="india">India</MenuItem>
+                  <MenuItem value="usa">USA</MenuItem>
+                  <MenuItem value="canada">Canada</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -143,9 +168,11 @@ export default function Formbody() {
                 fullWidth
                 id="date"
                 label="D O B"
+                name="dob"
+                onChange={changeHandler}
                 variant="standard"
                 type="date"
-                defaultValue="2017-05-24"
+                // defaultValue="2017-05-24"
                 sx={{ width: 220 }}
                 InputLabelProps={{
                   shrink: true,
@@ -154,11 +181,12 @@ export default function Formbody() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl >
-                <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+                <FormLabel id="gender">Gender</FormLabel>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
+                  name="gender"
+                  onChange={changeHandler}
                 >
                   <FormControlLabel value="female" control={<Radio />} label="Female" />
                   <FormControlLabel value="male" control={<Radio />} label="Male" />
@@ -168,19 +196,25 @@ export default function Formbody() {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                error={allValues.email == "" ? true : false}
+                helperText={allValues.lastname == "" ? "Required Field  (Eg:- you@mail.com)" : false}
                 required
                 fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                onChange={changeHandler}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+                error={allValues.password == "" ? true : false}
+                helperText={allValues.lastname == "" ? "Required Field" : false}
                 required
                 fullWidth
                 name="password"
+                onChange={changeHandler}
                 label="Password"
                 type="password"
                 id="password"
@@ -191,7 +225,8 @@ export default function Formbody() {
               <TextField
                 required
                 fullWidth
-                name="Job Title"
+                name="jobtitle"
+                onChange={changeHandler}
                 label="Job Title & Description"
                 type="text"
                 id="Job Title"
@@ -231,10 +266,10 @@ export default function Formbody() {
                 getOptionLabel={(option) => option.title}
                 // defaultValue={[top100Films[13]]}
                 renderInput={(params) => (
-                  <TextField {...params} label="Skill's" placeholder="Choose your skill's" />
+                  <TextField {...params} label="Skill's" placeholder="Choose your skill's"
+                    onChange={changeHandler} name="skills" />
                 )}
               />
-
             </Grid>
             <Grid item xs={12} sm={6}>
               <LocalizationProvider
@@ -272,7 +307,7 @@ export default function Formbody() {
                         InputLabelProps={{
                           shrink: true,
                         }}
-                        inputProps={{
+                        outputProps={{
                           step: 300, // 5 min
                         }}
                         sx={{ width: 200 }}
@@ -294,8 +329,6 @@ export default function Formbody() {
     </div >
   )
 }
-
-
 const top100Films = [
   { title: 'React', year: 1994 },
   { title: 'Angular', year: 1972 },

@@ -1,10 +1,11 @@
 import React from 'react'
 import Formbody from './Formbody'
 
-function index() {
+function index({getData,data}) {
   return (
     <div>
-        <Formbody/>
+        <Formbody getData={getData}/>
+        {/* <Userdetail data={data}/> */}
     </div>
   )
 }
