@@ -1,4 +1,4 @@
-import { Avatar, TextField, Typography, Grid, Input, InputLabel, MenuItem, Select, FormControl, FormControlLabel, Radio, RadioGroup, FormLabel, Button, Autocomplete } from '@mui/material'
+import { Avatar, TextField, Typography, Grid, Input, InputLabel, MenuItem, Select, FormControl, FormControlLabel, Radio, RadioGroup, FormLabel, Button, Autocomplete, TableCell, TableRow, TableContainer, Table, TableHead, TableBody, Paper, IconButton } from '@mui/material'
 import PropTypes from 'prop-types';
 import { Box, Container } from '@mui/system'
 import { IMaskInput } from 'react-imask';
@@ -7,8 +7,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { DateRangePicker } from '@mui/x-date-pickers-pro';
 import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
 import { useNavigate } from 'react-router-dom'
-
-
+import validator from 'validator'
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const TextMaskCustom = React.forwardRef(function TextMaskCustom(props, ref) {
   const { onChange, ...other } = props;
@@ -38,25 +39,38 @@ export default function Formbody({ getData }) {
   let navigate = useNavigate()
 
   const [value, setValue] = React.useState([null, null]);
-  const [currentimg, setCurrentimg] = React.useState('');  
+  const [currentimg, setCurrentimg] = React.useState();
+  const [emailError, setEmailError] = React.useState(true);
+  
+  const [workexperience, setWorkExperience] = useState({
+    disignation:{disignation: "",
+    joiningdt: "",
+    resigndt: ""}
+
+  })
+
+  const getTableValue = (e) => {
+    setWorkExperience({ ...workexperience.disignation, [e.target.name]: e.target.value })
+  }
 
   const [allValues, setAllValues] = useState({
-    image: { currentimg },
+    image: '',
     currentdateandtime: '',
     firstname: '',
     lastname: '',
     address: '',
-    contact: '+91 (100) 000-0000',
+    contact: '',
     country: '',
     dob: '',
     gender: '',
     email: '',
     password: '',
     jobtitle: '',
-    workexp: { value },
+    workexp: [{ value }],
     skills: [],
     timeshift: [null, null]
   });
+
   const changeHandler = (e) => {
     setAllValues({ ...allValues, [e.target.name]: e.target.value })
   }
@@ -73,13 +87,33 @@ export default function Formbody({ getData }) {
     console.log(e.target.files[0]);
   }
 
+  const emailValidation = () => {
+    const exp = /\S+@\S+\.\S+/
+    if (exp.test(allValues.email)) {
+      setEmailError(false)
+    } else {
+      setEmailError(true)
+    }
+
+  }
+
   const handleSubmit = (event) => {
+    // console.log(value,allValues.workexp={value});
+    allValues.image = { currentimg }
+    allValues.workexp = { value }
+    console.log(allValues);
     event.preventDefault();
-    if (allValues.firstname && allValues.lastname && allValues.email && allValues.password) {
+    emailValidation()
+    if (allValues.image && allValues.currentdateandtime && allValues.firstname
+      // &&
+      // allValues.lastname && allValues.address && allValues.contact && allValues.country &&
+      // allValues.dob && allValues.gender && allValues.email && allValues.password && allValues.jobtitle &&
+      // allValues.workexp && allValues.skills && allValues.timeshift
+    ) {
       // console.log(allValues,"gggg");
       getData(allValues);
       navigate('/userDetail')
-    } else { alert('Fill the Required Field') }
+    } else { alert('Invalide Form*') }
   };
 
   return (
@@ -93,6 +127,7 @@ export default function Formbody({ getData }) {
                 alt="Remy Sharp"
                 src={currentimg}
                 sx={{ width: 56, height: 56 }}
+                required
               />
               <input type="file" id='file' onChange={selectImage} style={{ display: "none" }} />
               <label htmlFor='file' id='uploadbtn'><b>Upload Your Image</b></label>
@@ -100,6 +135,7 @@ export default function Formbody({ getData }) {
             </Grid>
             <Grid item xs={12} sm={2}>
               <TextField
+                required
                 variant='standard'
                 fullWidth
                 id="datetime-local"
@@ -157,8 +193,10 @@ export default function Formbody({ getData }) {
             <Grid item xs={12} sm={6}>
               <InputLabel htmlFor="formatted-text-mask-input">Contact Number</InputLabel>
               <Input
+                required
                 value={allValues.contact}
                 name="contact"
+                placeholder='+91 (100) 000-0000'
                 onChange={changeHandler}
                 id="formatted-text-mask-input"
                 inputComponent={TextMaskCustom}
@@ -168,6 +206,7 @@ export default function Formbody({ getData }) {
               <FormControl fullWidth variant="standard">
                 <InputLabel id="demo-simple-select-label">Country </InputLabel>
                 <Select
+                  required
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={allValues.country}
@@ -216,7 +255,7 @@ export default function Formbody({ getData }) {
             <Grid item xs={12} sm={6}>
               <TextField
                 error={allValues.email == "" ? true : false}
-                helperText={allValues.lastname == "" ? "Required Field  (Eg:- you@mail.com)" : false}
+                helperText={emailError ? <span style={{ color: "red" }}>Required Field  (Eg:- you@mail.com)</span> : false}
                 required
                 fullWidth
                 id="email"
@@ -229,7 +268,7 @@ export default function Formbody({ getData }) {
             <Grid item xs={12} sm={6}>
               <TextField
                 error={allValues.password == "" ? true : false}
-                helperText={allValues.lastname == "" ? "Required Field" : false}
+                helperText={allValues.password == "" ? "Required Field" : false}
                 required
                 fullWidth
                 name="password"
@@ -240,6 +279,8 @@ export default function Formbody({ getData }) {
                 autoComplete="new-password"
               />
             </Grid>
+
+            {/*             
             <Grid item xs={12} sm={6}>
               <TextField
                 required
@@ -259,12 +300,16 @@ export default function Formbody({ getData }) {
                 dateAdapter={AdapterDateFns}
                 localeText={{ start: 'Joining Date', end: 'Resign Date' }}
               >
-                <Typography sx={{ mt: 2, mb: 1 }}>Work Experience </Typography>
+                <Typography sx={{mb: 2 }}>Work Experience </Typography>
                 <DateRangePicker
                   calendars={1}
+                  name="workexp"
+                  // value={allValues.workexp}  
                   value={value}
-                  onChange={(newValue) => {
-                    setValue(newValue);
+                  onChange={(e) => {
+                    // setAllValues({ ...allValues, [e.target.name]: e.target.value })
+                    setValue(e)
+                    console.log(e);
                   }}
                   renderInput={(startProps, endProps) => (
                     <React.Fragment>
@@ -276,6 +321,45 @@ export default function Formbody({ getData }) {
                 />
               </LocalizationProvider>
             </Grid>
+ */}
+
+
+            <Grid item xs={12} sm={12} md={12}>
+              <Typography sx={{ mb: 1, mt: 2 }}>Work Experience </Typography>
+              <TableContainer component={Paper} elevation={3} sx={{ marginBottom: "22px" }}>
+                <Table aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell><b>Designation</b></TableCell>
+                      <TableCell><b>:</b></TableCell>
+                      <TableCell ><b>Joining Date</b></TableCell>
+                      <TableCell ><b>Resign Date</b></TableCell>
+                      <TableCell><b>:</b></TableCell>
+                      <TableCell ><b>Add option</b></TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    
+                      <TableRow
+                        key={workexperience.disignation}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell component="th" scope="row">
+                          <TextField variant='standard' type={"text"} value={workexperience.disignation}/>
+                        </TableCell>
+                        <TableCell><b>:</b></TableCell>
+                        <TableCell ><TextField variant='standard' type={"date"} value={workexperience.joiningdt}/></TableCell>
+                        <TableCell ><TextField variant='standard' type={"date"} value={workexperience.resigndt}/></TableCell>
+                        <TableCell><b>:</b></TableCell>
+                        <TableCell align='center'><IconButton ><AddIcon /></IconButton>&nbsp;&nbsp;<IconButton ><DeleteIcon /></IconButton></TableCell>
+                      </TableRow >
+                    
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+            </Grid>
+
             <Grid item xs={12} sm={6}>
               <Autocomplete
                 multiple
@@ -290,12 +374,13 @@ export default function Formbody({ getData }) {
                 )}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6} sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography component="label" mt={2} htmlFor='time' >Time Shift :</Typography>
               <LocalizationProvider
                 dateAdapter={AdapterDateFns}
                 localeText={{ start: 'Starting Time', end: 'Ending Time' }}
               >
-                <Typography sx={{ mt: 2, mb: 2 }}>Time Shift </Typography>
+
                 <DateRangePicker
                   calendars={1}
                   value={value}
@@ -315,9 +400,9 @@ export default function Formbody({ getData }) {
                         inputProps={{
                           step: 300, // 5 min
                         }}
-                        sx={{ width: 200 }}
+                        sx={{ width: 175 }}
                       />
-                      <Box sx={{ mx: 9 }}> To </Box>
+                      <Box sx={{ mx: 5 }}> To </Box>
                       <TextField
                         id="time"
                         label="Ending Time"
@@ -329,7 +414,7 @@ export default function Formbody({ getData }) {
                         outputProps={{
                           step: 300, // 5 min
                         }}
-                        sx={{ width: 200 }}
+                        sx={{ width: 175 }}
                       />
                     </React.Fragment>
                   )}
@@ -354,4 +439,15 @@ const top100Films = [
   { title: 'Node js', year: 2000 },
   { title: 'Express', year: 2009 },
   { title: 'MongoDB', year: 1975 },
+];
+
+// function createData(name, calories, fat, carbs, protein) {
+//   return { name, calories, fat, carbs, protein };
+// }
+
+const rows = [
+  { name: 'Frozen yoghurt', calories: 159, fat: 6.0, carbs: 12 },
+  // createData('fffffffff', 159, 6.0, 24, 4.0),
+  // createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+  // createData('Eclair', 262, 16.0, 24, 6.0),
 ];
