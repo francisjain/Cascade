@@ -12,7 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
 function Test() {
-  const [serviceList, setServiceList] = useState([{ service: "" }]);
+  const [serviceList, setServiceList] = useState([{ service: "", service1: '' }]);
 
   const handleServiceChange = (e, index) => {
     const { name, value } = e.target;
@@ -31,38 +31,53 @@ function Test() {
     setServiceList([...serviceList, { service: "" }]);
   };
 
-  const [allValues, setAllValues] = useState({
-    mobile: '',
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const changeHandler = e => {
-    setAllValues({ ...allValues, [e.target.name]: e.target.value })
-    console.log(allValues);
-  }
 
+  // const [allValues, setAllValues] = useState({
+  //   mobile: '',
+  //   username: '',
+  //   email: '',
+  //   password: '',
+  //   confirmPassword: ''
+  // });
 
-  const [workexperience, setWorkExperience] = useState({
+  // const changeHandler = e => {
+  //   setAllValues({ ...allValues, [e.target.name]: e.target.value })
+  //   console.log(allValues);
+  // }
+
+  const [workexperience, setWorkExperience] = useState([{
     disignation: "",
     joiningdt: "",
     resigndt: ""
-
-
-  })
-
-
-
-  const getTableValue = (e) => {
-    setWorkExperience({ ...workexperience, [e.target.name]: e.target.value })
-
+  }])
+  
+  const getTableValue = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...workexperience];
+    list[index][name] = value;
+    setWorkExperience(list)
   }
+
+  const removeExp = (index) => {
+    const list = [...workexperience]
+    list.splice(index, 1);
+    setWorkExperience(list)
+  }
+  const addExp = () => {
+    setWorkExperience([...workexperience, {
+      disignation: "",
+      joiningdt: "",
+      resigndt: ""
+    }])
+  }
+
 
   console.log(workexperience);
   return (
     <div>
-      <input type="text"
+
+      {
+      /* <input type="text"
         className="form-control"
         id="mobile"
         name="mobile"
@@ -75,11 +90,11 @@ function Test() {
         name="username"
         placeholder="Enter a valid Name"
         onChange={changeHandler}
-      />
+      /> */}
 
 
 
-      {/* <Grid item  md={6}>
+      <Grid item md={6}>
         <Typography sx={{ mb: 1, mt: 2 }}>Work Experience </Typography>
         <TableContainer component={Paper} elevation={3} sx={{ marginBottom: "22px" }}>
           <Table aria-label="simple table">
@@ -90,30 +105,41 @@ function Test() {
                 <TableCell ><b>Joining Date</b></TableCell>
                 <TableCell ><b>Resign Date</b></TableCell>
                 <TableCell><b>:</b></TableCell>
-                <TableCell ><b>Add option</b></TableCell>
+                <TableCell align='center'><b>Add option</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
 
-              <TableRow
-                key={workexperience.disignation}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <TextField name='disignation' variant='standard' type={"text"} value={workexperience.AddIcondisignation} onChange={getTableValue}/>
-                </TableCell>
-                <TableCell><b>:</b></TableCell>
-                <TableCell ><TextField name='joiningdt' variant='standard' type={"date"} value={workexperience.joiningdt} onChange={getTableValue}/></TableCell>
-                <TableCell ><TextField name='resigndt' variant='standard' type={"date"} value={workexperience.resigndt} onChange={getTableValue}/></TableCell>
-                <TableCell><b>:</b></TableCell>
-                <TableCell align='center'><IconButton ><AddIcon /></IconButton>&nbsp;&nbsp;<IconButton ><DeleteIcon /></IconButton></TableCell>
-              </TableRow >
+              {
+                workexperience.map((d, index) => (
+                  <>
+                    <TableRow
+                      key={index}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        <TextField name='disignation' variant='standard' type="text" value={d.disignation} onChange={(e) => getTableValue(e, index)} />
+                      </TableCell>
+                      <TableCell><b>:</b></TableCell>
+                      <TableCell ><TextField name='joiningdt' placeholder='Join Date' variant='standard' type="date" value={d.joiningdt} onChange={(e) => getTableValue(e, index)} /></TableCell>
+                      <TableCell ><TextField name='resigndt' variant='standard' type="date" value={d.resigndt} onChange={(e) => getTableValue(e, index)} /></TableCell>
+                      <TableCell><b>:</b></TableCell>
+                      <TableCell align='center'>
+                        {workexperience.length - 1 === index && workexperience.length < 4 && (
+                          <IconButton onClick={addExp}><AddIcon /></IconButton>)} &nbsp;&nbsp;
+                        {workexperience.length !== 1 && (
+                          <IconButton onClick={() => removeExp(index)}><DeleteIcon /></IconButton>)}
+                      </TableCell>
+                    </TableRow >
+                  </>
+                ))
+              }
 
             </TableBody>
           </Table>
         </TableContainer>
 
-      </Grid> */}
+      </Grid>
 
 
       <form className="App" autoComplete="off">
@@ -127,6 +153,14 @@ function Test() {
                   type="text"
                   id="service"
                   value={singleService.service}
+                  onChange={(e) => handleServiceChange(e, index)}
+                  required
+                />
+                <input
+                  name="service1"
+                  type="text"
+                  id="service1"
+                  value={singleService.service1}
                   onChange={(e) => handleServiceChange(e, index)}
                   required
                 />
@@ -159,7 +193,7 @@ function Test() {
           {serviceList &&
             serviceList.map((singleService, index) => (
               <ul key={index}>
-                {singleService.service && <li>{singleService.service}</li>}
+                {singleService.service && <li>{singleService.service}&nbsp;{singleService.service1}</li>}
               </ul>
             ))}
         </div>

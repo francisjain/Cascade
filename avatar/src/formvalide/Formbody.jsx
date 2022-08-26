@@ -41,16 +41,26 @@ export default function Formbody({ getData }) {
   const [value, setValue] = React.useState([null, null]);
   const [currentimg, setCurrentimg] = React.useState();
   const [emailError, setEmailError] = React.useState(true);
-  
-  const [workexperience, setWorkExperience] = useState({
-    disignation:{disignation: "",
+
+  const [workexperience, setWorkExperience] = useState([{
+    designation: "",
     joiningdt: "",
-    resigndt: ""}
+    resigndt: ""
 
-  })
+  }])
 
-  const getTableValue = (e) => {
-    setWorkExperience({ ...workexperience.disignation, [e.target.name]: e.target.value })
+  const getTableValue = (e, index) => {
+    const { name, value } = e.target;
+    const list = [...workexperience];
+    list[index][name] = value
+    setWorkExperience(list)
+  }
+
+  const addExp = () => { setWorkExperience([...workexperience, { designation: "", joiningdt: "", resigndt: "" }]) }
+  const removeExp = (index) => {
+    const list = [...workexperience];
+    list.splice(index, 1);
+    setWorkExperience(list)
   }
 
   const [allValues, setAllValues] = useState({
@@ -100,7 +110,7 @@ export default function Formbody({ getData }) {
   const handleSubmit = (event) => {
     // console.log(value,allValues.workexp={value});
     allValues.image = { currentimg }
-    allValues.workexp = { value }
+    allValues.workexp = { workexperience }
     console.log(allValues);
     event.preventDefault();
     emailValidation()
@@ -335,25 +345,32 @@ export default function Formbody({ getData }) {
                       <TableCell ><b>Joining Date</b></TableCell>
                       <TableCell ><b>Resign Date</b></TableCell>
                       <TableCell><b>:</b></TableCell>
-                      <TableCell ><b>Add option</b></TableCell>
+                      <TableCell align='center'><b>Add option</b></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    
+                    {workexperience.map((d, index) => (
                       <TableRow
-                        key={workexperience.disignation}
+                        key={index}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                       >
                         <TableCell component="th" scope="row">
-                          <TextField variant='standard' type={"text"} value={workexperience.disignation}/>
+                          <TextField name='designation' variant='standard' type={"text"} value={d.designation} />
                         </TableCell>
                         <TableCell><b>:</b></TableCell>
-                        <TableCell ><TextField variant='standard' type={"date"} value={workexperience.joiningdt}/></TableCell>
-                        <TableCell ><TextField variant='standard' type={"date"} value={workexperience.resigndt}/></TableCell>
+                        <TableCell ><TextField name="joiningdt" variant='standard' type={"date"} value={d.joiningdt} /></TableCell>
+                        <TableCell ><TextField name='resigndt' variant='standard' type={"date"} value={d.resigndt} /></TableCell>
                         <TableCell><b>:</b></TableCell>
-                        <TableCell align='center'><IconButton ><AddIcon /></IconButton>&nbsp;&nbsp;<IconButton ><DeleteIcon /></IconButton></TableCell>
+                        <TableCell align='center'>
+
+                          {workexperience.length - 1 === index &&
+                            workexperience.length < 4 &&
+                            (<IconButton onClick={addExp}> <AddIcon /></IconButton>)}
+                          &nbsp;&nbsp;
+                          {workexperience.length !== 1 && (<IconButton onClick={() => removeExp(index)}><DeleteIcon /></IconButton>)}
+                        </TableCell>
                       </TableRow >
-                    
+                    ))}
                   </TableBody>
                 </Table>
               </TableContainer>
