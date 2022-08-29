@@ -1,207 +1,156 @@
-import { Avatar, TextField, Typography, Grid, Input, InputLabel, MenuItem, Select, FormControl, FormControlLabel, Radio, RadioGroup, FormLabel, Button, Autocomplete, TableCell, TableRow, TableContainer, Table, TableHead, TableBody, Paper, IconButton } from '@mui/material'
-import PropTypes from 'prop-types';
-import { Box, Container } from '@mui/system'
-import { IMaskInput } from 'react-imask';
-import React, { useState } from 'react'
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { DateRangePicker } from '@mui/x-date-pickers-pro';
-import { AdapterDateFns } from '@mui/x-date-pickers-pro/AdapterDateFns';
-import { useNavigate } from 'react-router-dom'
-import validator from 'validator'
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import * as React from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 
-function Test() {
-  const [serviceList, setServiceList] = useState([{ service: "", service1: '' }]);
-
-  const handleServiceChange = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...serviceList];
-    list[index][name] = value;
-    setServiceList(list);
-  };
-
-  const handleServiceRemove = (index) => {
-    const list = [...serviceList];
-    list.splice(index, 1);
-    setServiceList(list);
-  };
-
-  const handleServiceAdd = () => {
-    setServiceList([...serviceList, { service: "" }]);
-  };
-
-
-  // const [allValues, setAllValues] = useState({
-  //   mobile: '',
-  //   username: '',
-  //   email: '',
-  //   password: '',
-  //   confirmPassword: ''
-  // });
-
-  // const changeHandler = e => {
-  //   setAllValues({ ...allValues, [e.target.name]: e.target.value })
-  //   console.log(allValues);
-  // }
-
-  const [workexperience, setWorkExperience] = useState([{
-    disignation: "",
-    joiningdt: "",
-    resigndt: ""
-  }])
-  
-  const getTableValue = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...workexperience];
-    list[index][name] = value;
-    setWorkExperience(list)
+export default function Test() {
+  const [value, setValue] = React.useState()
+  console.log(value);
+  const handleChange = (e)=>{
+    setValue(e.option)
+    console.log(value);
   }
-
-  const removeExp = (index) => {
-    const list = [...workexperience]
-    list.splice(index, 1);
-    setWorkExperience(list)
-  }
-  const addExp = () => {
-    setWorkExperience([...workexperience, {
-      disignation: "",
-      joiningdt: "",
-      resigndt: ""
-    }])
-  }
-
-
-  console.log(workexperience);
   return (
-    <div>
-
-      {
-      /* <input type="text"
-        className="form-control"
-        id="mobile"
-        name="mobile"
-        placeholder="Enter a valid mobile number"
-        onChange={changeHandler}
-      />
-      <input type="text"
-        className="form-control"
-        id="username"
-        name="username"
-        placeholder="Enter a valid Name"
-        onChange={changeHandler}
-      /> */}
-
-
-
-      <Grid item md={6}>
-        <Typography sx={{ mb: 1, mt: 2 }}>Work Experience </Typography>
-        <TableContainer component={Paper} elevation={3} sx={{ marginBottom: "22px" }}>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell><b>Designation</b></TableCell>
-                <TableCell><b>:</b></TableCell>
-                <TableCell ><b>Joining Date</b></TableCell>
-                <TableCell ><b>Resign Date</b></TableCell>
-                <TableCell><b>:</b></TableCell>
-                <TableCell align='center'><b>Add option</b></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-
-              {
-                workexperience.map((d, index) => (
-                  <>
-                    <TableRow
-                      key={index}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        <TextField name='disignation' variant='standard' type="text" value={d.disignation} onChange={(e) => getTableValue(e, index)} />
-                      </TableCell>
-                      <TableCell><b>:</b></TableCell>
-                      <TableCell ><TextField name='joiningdt' placeholder='Join Date' variant='standard' type="date" value={d.joiningdt} onChange={(e) => getTableValue(e, index)} /></TableCell>
-                      <TableCell ><TextField name='resigndt' variant='standard' type="date" value={d.resigndt} onChange={(e) => getTableValue(e, index)} /></TableCell>
-                      <TableCell><b>:</b></TableCell>
-                      <TableCell align='center'>
-                        {workexperience.length - 1 === index && workexperience.length < 4 && (
-                          <IconButton onClick={addExp}><AddIcon /></IconButton>)} &nbsp;&nbsp;
-                        {workexperience.length !== 1 && (
-                          <IconButton onClick={() => removeExp(index)}><DeleteIcon /></IconButton>)}
-                      </TableCell>
-                    </TableRow >
-                  </>
-                ))
-              }
-
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-      </Grid>
-
-
-      <form className="App" autoComplete="off">
-        <div className="form-field">
-          <label htmlFor="service">Service(s)</label>
-          {serviceList.map((singleService, index) => (
-            <div key={index} className="services">
-              <div className="first-division">
-                <input
-                  name="service"
-                  type="text"
-                  id="service"
-                  value={singleService.service}
-                  onChange={(e) => handleServiceChange(e, index)}
-                  required
-                />
-                <input
-                  name="service1"
-                  type="text"
-                  id="service1"
-                  value={singleService.service1}
-                  onChange={(e) => handleServiceChange(e, index)}
-                  required
-                />
-                {serviceList.length - 1 === index && serviceList.length < 4 && (
-                  <button
-                    type="button"
-                    onClick={handleServiceAdd}
-                    className="add-btn"
-                  >
-                    <span>Add a Service</span>
-                  </button>
-                )}
-              </div>
-              <div className="second-division">
-                {serviceList.length !== 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleServiceRemove(index)}
-                    className="remove-btn"
-                  >
-                    <span>Remove</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="output">
-          <h2>Output</h2>
-          {serviceList &&
-            serviceList.map((singleService, index) => (
-              <ul key={index}>
-                {singleService.service && <li>{singleService.service}&nbsp;{singleService.service1}</li>}
-              </ul>
-            ))}
-        </div>
-      </form>
-
-
-    </div>
-  )
+    <Autocomplete
+      multiple
+      limitTags={2}
+      id="multiple-limit-tags"
+      options={top100Films}
+      getOptionLabel={(option) => option.title}
+      // defaultValue={[top100Films[13], top100Films[12], top100Films[11]]}
+      value={value}
+      onChange={handleChange}
+      renderInput={(params) => (
+        <TextField {...params} label="limitTags" placeholder="Favorites" />
+      )}
+      sx={{ width: '500px' }}
+    />
+  );
 }
 
-export default Test
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+const top100Films = [
+  { title: 'The Shawshank Redemption', year: 1994 },
+  { title: 'The Godfather', year: 1972 },
+  { title: 'The Godfather: Part II', year: 1974 },
+  { title: 'The Dark Knight', year: 2008 },
+  { title: '12 Angry Men', year: 1957 },
+  { title: "Schindler's List", year: 1993 },
+  { title: 'Pulp Fiction', year: 1994 },
+  {
+    title: 'The Lord of the Rings: The Return of the King',
+    year: 2003,
+  },
+  { title: 'The Good, the Bad and the Ugly', year: 1966 },
+  { title: 'Fight Club', year: 1999 },
+  {
+    title: 'The Lord of the Rings: The Fellowship of the Ring',
+    year: 2001,
+  },
+  {
+    title: 'Star Wars: Episode V - The Empire Strikes Back',
+    year: 1980,
+  },
+  { title: 'Forrest Gump', year: 1994 },
+  { title: 'Inception', year: 2010 },
+  {
+    title: 'The Lord of the Rings: The Two Towers',
+    year: 2002,
+  },
+  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
+  { title: 'Goodfellas', year: 1990 },
+  { title: 'The Matrix', year: 1999 },
+  { title: 'Seven Samurai', year: 1954 },
+  {
+    title: 'Star Wars: Episode IV - A New Hope',
+    year: 1977,
+  },
+  { title: 'City of God', year: 2002 },
+  { title: 'Se7en', year: 1995 },
+  { title: 'The Silence of the Lambs', year: 1991 },
+  { title: "It's a Wonderful Life", year: 1946 },
+  { title: 'Life Is Beautiful', year: 1997 },
+  { title: 'The Usual Suspects', year: 1995 },
+  { title: 'Léon: The Professional', year: 1994 },
+  { title: 'Spirited Away', year: 2001 },
+  { title: 'Saving Private Ryan', year: 1998 },
+  { title: 'Once Upon a Time in the West', year: 1968 },
+  { title: 'American History X', year: 1998 },
+  { title: 'Interstellar', year: 2014 },
+  { title: 'Casablanca', year: 1942 },
+  { title: 'City Lights', year: 1931 },
+  { title: 'Psycho', year: 1960 },
+  { title: 'The Green Mile', year: 1999 },
+  { title: 'The Intouchables', year: 2011 },
+  { title: 'Modern Times', year: 1936 },
+  { title: 'Raiders of the Lost Ark', year: 1981 },
+  { title: 'Rear Window', year: 1954 },
+  { title: 'The Pianist', year: 2002 },
+  { title: 'The Departed', year: 2006 },
+  { title: 'Terminator 2: Judgment Day', year: 1991 },
+  { title: 'Back to the Future', year: 1985 },
+  { title: 'Whiplash', year: 2014 },
+  { title: 'Gladiator', year: 2000 },
+  { title: 'Memento', year: 2000 },
+  { title: 'The Prestige', year: 2006 },
+  { title: 'The Lion King', year: 1994 },
+  { title: 'Apocalypse Now', year: 1979 },
+  { title: 'Alien', year: 1979 },
+  { title: 'Sunset Boulevard', year: 1950 },
+  {
+    title: 'Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb',
+    year: 1964,
+  },
+  { title: 'The Great Dictator', year: 1940 },
+  { title: 'Cinema Paradiso', year: 1988 },
+  { title: 'The Lives of Others', year: 2006 },
+  { title: 'Grave of the Fireflies', year: 1988 },
+  { title: 'Paths of Glory', year: 1957 },
+  { title: 'Django Unchained', year: 2012 },
+  { title: 'The Shining', year: 1980 },
+  { title: 'WALL·E', year: 2008 },
+  { title: 'American Beauty', year: 1999 },
+  { title: 'The Dark Knight Rises', year: 2012 },
+  { title: 'Princess Mononoke', year: 1997 },
+  { title: 'Aliens', year: 1986 },
+  { title: 'Oldboy', year: 2003 },
+  { title: 'Once Upon a Time in America', year: 1984 },
+  { title: 'Witness for the Prosecution', year: 1957 },
+  { title: 'Das Boot', year: 1981 },
+  { title: 'Citizen Kane', year: 1941 },
+  { title: 'North by Northwest', year: 1959 },
+  { title: 'Vertigo', year: 1958 },
+  {
+    title: 'Star Wars: Episode VI - Return of the Jedi',
+    year: 1983,
+  },
+  { title: 'Reservoir Dogs', year: 1992 },
+  { title: 'Braveheart', year: 1995 },
+  { title: 'M', year: 1931 },
+  { title: 'Requiem for a Dream', year: 2000 },
+  { title: 'Amélie', year: 2001 },
+  { title: 'A Clockwork Orange', year: 1971 },
+  { title: 'Like Stars on Earth', year: 2007 },
+  { title: 'Taxi Driver', year: 1976 },
+  { title: 'Lawrence of Arabia', year: 1962 },
+  { title: 'Double Indemnity', year: 1944 },
+  {
+    title: 'Eternal Sunshine of the Spotless Mind',
+    year: 2004,
+  },
+  { title: 'Amadeus', year: 1984 },
+  { title: 'To Kill a Mockingbird', year: 1962 },
+  { title: 'Toy Story 3', year: 2010 },
+  { title: 'Logan', year: 2017 },
+  { title: 'Full Metal Jacket', year: 1987 },
+  { title: 'Dangal', year: 2016 },
+  { title: 'The Sting', year: 1973 },
+  { title: '2001: A Space Odyssey', year: 1968 },
+  { title: "Singin' in the Rain", year: 1952 },
+  { title: 'Toy Story', year: 1995 },
+  { title: 'Bicycle Thieves', year: 1948 },
+  { title: 'The Kid', year: 1921 },
+  { title: 'Inglourious Basterds', year: 2009 },
+  { title: 'Snatch', year: 2000 },
+  { title: '3 Idiots', year: 2009 },
+  { title: 'Monty Python and the Holy Grail', year: 1975 },
+];

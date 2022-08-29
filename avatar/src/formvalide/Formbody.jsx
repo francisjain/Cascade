@@ -39,28 +39,54 @@ export default function Formbody({ getData }) {
   let navigate = useNavigate()
 
   const [value, setValue] = React.useState([null, null]);
-  const [currentimg, setCurrentimg] = React.useState();
   const [emailError, setEmailError] = React.useState(true);
 
-  const [workexperience, setWorkExperience] = useState([{
-    designation: "",
-    joiningdt: "",
-    resigndt: ""
 
-  }])
+  const getTableValue = (e, index, ftype) => {
+    const expValue = allValues.workexp
+    expValue[index][ftype] = e.target.value
 
-  const getTableValue = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...workexperience];
-    list[index][name] = value
-    setWorkExperience(list)
+    if (ftype == "resigndt") {
+      let valJoin = allValues.workexp.map(d => d.joiningdt)
+      if (expValue[index]["resigndt"] > valJoin) {
+        expValue[index]["resigndt"] = e.target.value
+        setAllValues({
+          ...allValues,
+          workexp: expValue,
+        });
+      } else {
+        alert("Invalide Date Entry*");
+      }
+    } else {
+      setAllValues({
+        ...allValues,
+        workexp: expValue,
+      });
+    }
+
+    console.log(allValues.workexp);
   }
 
-  const addExp = () => { setWorkExperience([...workexperience, { designation: "", joiningdt: "", resigndt: "" }]) }
+  const addExp = () => {
+    const expValue = allValues.workexp;
+    expValue.push({
+      designation: "",
+      joiningdt: "",
+      resigndt: ""
+    })
+    setAllValues({
+      ...allValues,
+      workexp: expValue,
+    });
+  }
+
   const removeExp = (index) => {
-    const list = [...workexperience];
-    list.splice(index, 1);
-    setWorkExperience(list)
+    const expValue = allValues.workexp;
+    expValue.splice(index, 1);
+    setAllValues({
+      ...allValues,
+      workexp: expValue,
+    });
   }
 
   const [allValues, setAllValues] = useState({
@@ -75,14 +101,26 @@ export default function Formbody({ getData }) {
     gender: '',
     email: '',
     password: '',
-    jobtitle: '',
-    workexp: [{ value }],
+    workexp: [{
+      designation: "",
+      joiningdt: "",
+      resigndt: ""
+
+    }],
     skills: [],
     timeshift: [null, null]
   });
 
   const changeHandler = (e) => {
-    setAllValues({ ...allValues, [e.target.name]: e.target.value })
+    if (e.target.name == "dob") {
+      if (e.target.value < "2019-12-01") {
+        setAllValues({ ...allValues, [e.target.name]: e.target.value })
+      } else {
+        alert("must be under 2019");
+      }
+    } else {
+      setAllValues({ ...allValues, [e.target.name]: e.target.value })
+    }
   }
 
   const selectImage = (e) => {
@@ -90,7 +128,7 @@ export default function Formbody({ getData }) {
 
     reader.onload = () => {
       if (reader.readyState === 2) {
-        setCurrentimg(reader.result)
+        setAllValues({ ...allValues, [e.target.name]: reader.result })
       }
     }
     reader.readAsDataURL(e.target.files[0])
@@ -108,23 +146,23 @@ export default function Formbody({ getData }) {
   }
 
   const handleSubmit = (event) => {
-    // console.log(value,allValues.workexp={value});
-    allValues.image = { currentimg }
-    allValues.workexp = { workexperience }
-    console.log(allValues);
+
     event.preventDefault();
     emailValidation()
-    if (allValues.image && allValues.currentdateandtime && allValues.firstname
+    if (allValues.image
+      // && allValues.currentdateandtime && allValues.firstname
       // &&
       // allValues.lastname && allValues.address && allValues.contact && allValues.country &&
       // allValues.dob && allValues.gender && allValues.email && allValues.password && allValues.jobtitle &&
       // allValues.workexp && allValues.skills && allValues.timeshift
     ) {
-      // console.log(allValues,"gggg");
       getData(allValues);
-      navigate('/userDetail')
+      // navigate('/userDetail')
     } else { alert('Invalide Form*') }
   };
+
+  console.log(allValues, "gggg");
+  
 
   return (
     <div>
@@ -135,11 +173,11 @@ export default function Formbody({ getData }) {
             <Grid xs={12} sm={8} style={{ marginLeft: "50px", width: "100%", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
               <Avatar
                 alt="Remy Sharp"
-                src={currentimg}
+                src={allValues.image}
                 sx={{ width: 56, height: 56 }}
                 required
               />
-              <input type="file" id='file' onChange={selectImage} style={{ display: "none" }} />
+              <input type="file" id='file' name='image' onChange={selectImage} style={{ display: "none" }} />
               <label htmlFor='file' id='uploadbtn'><b>Upload Your Image</b></label>
 
             </Grid>
@@ -237,6 +275,7 @@ export default function Formbody({ getData }) {
                 id="date"
                 label="D O B"
                 name="dob"
+                value={allValues.dob}
                 onChange={changeHandler}
                 variant="standard"
                 type="date"
@@ -349,25 +388,25 @@ export default function Formbody({ getData }) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {workexperience.map((d, index) => (
+                    {allValues.workexp.map((d, index) => (
                       <TableRow
                         key={index}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                       >
                         <TableCell component="th" scope="row">
-                          <TextField name='designation' variant='standard' type={"text"} value={d.designation} />
+                          <TextField name='designation' variant='standard' type={"text"} value={d.designation} onChange={(e) => { getTableValue(e, index, "designation") }} />
                         </TableCell>
                         <TableCell><b>:</b></TableCell>
-                        <TableCell ><TextField name="joiningdt" variant='standard' type={"date"} value={d.joiningdt} /></TableCell>
-                        <TableCell ><TextField name='resigndt' variant='standard' type={"date"} value={d.resigndt} /></TableCell>
+                        <TableCell ><TextField name="joiningdt" variant='standard' type={"date"} value={d.joiningdt} onChange={(e) => { getTableValue(e, index, "joiningdt") }} /></TableCell>
+                        <TableCell ><TextField name='resigndt' variant='standard' type={"date"} value={d.resigndt} onChange={(e) => { getTableValue(e, index, "resigndt") }} /></TableCell>
                         <TableCell><b>:</b></TableCell>
                         <TableCell align='center'>
 
-                          {workexperience.length - 1 === index &&
-                            workexperience.length < 4 &&
+                          {d.designation && d.joiningdt && d.resigndt && allValues.workexp.length - 1 === index &&
+                            allValues.workexp.length < 4 &&
                             (<IconButton onClick={addExp}> <AddIcon /></IconButton>)}
                           &nbsp;&nbsp;
-                          {workexperience.length !== 1 && (<IconButton onClick={() => removeExp(index)}><DeleteIcon /></IconButton>)}
+                          {allValues.workexp.length !== 1 && (<IconButton onClick={() => removeExp(index)}><DeleteIcon /></IconButton>)}
                         </TableCell>
                       </TableRow >
                     ))}

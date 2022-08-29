@@ -32,7 +32,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function Userdetail({ data }) {
-    console.log(data);
+    console.log(data.map(d=>d.image));
 
     return (
         <div>
@@ -127,13 +127,13 @@ export default function Userdetail({ data }) {
                                                 <StyledTableCell align="left">:</StyledTableCell>
                                                 <StyledTableCell align="left">{row.skills}</StyledTableCell>
                                             </StyledTableRow>
-                                            <StyledTableRow key={row.workexp}>
+                                            {/* <StyledTableRow key={row.workexp}>
                                                 <StyledTableCell component="th" scope="row">
                                                     Work Experience
                                                 </StyledTableCell>
                                                 <StyledTableCell align="left">:</StyledTableCell>
                                                 <StyledTableCell align="left">{row.workexp}</StyledTableCell>
-                                            </StyledTableRow>
+                                            </StyledTableRow> */}
                                             {/* <StyledTableRow key={row.timeshift}>
                                                 <StyledTableCell component="th" scope="row">
                                                     Time sift
